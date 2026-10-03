@@ -3,10 +3,6 @@ CFLAGS += -O3
 DEPFLAGS += -MD -MF $(dep.dir)/$(<F).d \
 	    -MT $(@:$(cpp.dir)/%.abc_cpp=$(obj.dir)/%.o) -MP
 
-ulm.isa := simple
-ulm.tools := $(ulm.isa)/ulm $(ulm.isa)/ulmas $(ulm.isa)/udb-tui
-ulm.gen := ulm-generator
-
 LDFLAGS += 
 
 dep.dir := dep
@@ -49,19 +45,6 @@ $(obj.dir): ; mkdir -p $@
 .PHONY: all
 all: $(target) $(common_obj) $(target_obj) $(ulm.tools)
 	@./install-myabc.sh
-
-$(ulm.tools) $(ulm.isa): $(ulm.isa).isa
-	@if command -v $(ulm.gen) >/dev/null 2>&1; then \
-		rm -rf $(ulm.isa); \
-		$(ulm.gen) --install $(ulm.isa).isa; \
-	else \
-		echo; \
-		echo "Warning: $(ulm.gen) is not installed."; \
-		echo "The ULM assembler tools will not be built."; \
-		echo "You can clone it from:"; \
-		echo "  https://github.com/michael-lehn/ulm-generator"; \
-		echo; \
-	fi
 
 .PHONY: tree.tex
 tree.tex: xtest_parser
