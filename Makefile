@@ -44,7 +44,6 @@ $(obj.dir): ; mkdir -p $@
 
 .PHONY: all
 all: $(target) $(common_obj) $(target_obj) $(ulm.tools)
-	@./install-myabc.sh
 
 .PHONY: tree.tex
 tree.tex: xtest_parser
