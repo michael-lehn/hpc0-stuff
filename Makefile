@@ -8,31 +8,16 @@ LDFLAGS +=
 dep.dir := dep
 obj.dir := obj
 
-gen_src := $(wildcard gen_*.abc)
-gen_obj := $(gen_src:%.abc=$(obj.dir)/%.o)
-
-backend := $(patsubst gen_%,%,$(basename $(notdir $(gen_src))))
-
 target_src := $(wildcard x*.abc)
 target_obj := $(target_src:%.abc=$(obj.dir)/%.o)
-target := $(foreach b,$(backend), \
-             $(patsubst %.o,%_$(b),$(notdir $(target_obj))))
+target := $(patsubst %.o,%,$(notdir $(target_obj)))
 
-common_src := $(filter-out $(gen_src) $(target_src), $(wildcard *.abc))
+common_src := $(filter-out $(target_src), $(wildcard *.abc))
 common_obj := $(common_src:%.abc=$(obj.dir)/%.o)
 
 dep := $(gen_src:%=$(dep.dir)/%.d) \
        $(common_src:%=$(dep.dir)/%.d) \
        $(target_src:%=$(dep.dir)/%.d)
-
-define target_rule
-$(1)_$(2): $(obj.dir)/$(1).o $(common_obj) $(obj.dir)/gen_$(2).o
-	$(CC) -o $$@ $$^
-endef
-
-$(foreach t,$(basename $(notdir $(target_src))), \
-	$(foreach b,$(backend), \
-		$(eval $(call target_rule,$(t),$(b)))))
 
 $(obj.dir)/%.o : %.abc | $(obj.dir) $(dep.dir)
 	$(CC) -c $(CFLAGS) $(DEPFLAGS) $< -o $@
@@ -44,6 +29,9 @@ $(obj.dir): ; mkdir -p $@
 
 .PHONY: all
 all: $(target) $(common_obj) $(target_obj) $(ulm.tools)
+
+%: $(obj.dir)/%.o $(common_obj)
+	abc -o $@ $^
 
 .PHONY: tree.tex
 tree.tex: xtest_parser
