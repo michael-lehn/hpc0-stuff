@@ -53,7 +53,7 @@ tree.tex: xtest_parser
 	@echo '\\begin{document}' >> tree.tex
 	@echo '\\begin{forest}' >> tree.tex
 	@echo 'Type an expression (use Control-D for EOI):'
-	./xtest_parser_simple >> tree.tex
+	./xtest_parser >> tree.tex
 	@echo '\\end{forest}' >> tree.tex
 	@echo '\\end{document}' >> tree.tex
 	@echo "Generated 'tree.tex'"
